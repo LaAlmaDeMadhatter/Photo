@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    
+    <div id="camera"></div>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="#">Главная</a></li>
+          <li><a href="#">О нас</a></li>
+          <li><a href="#">Портфолио</a></li>
+          <li><a href="#">Контакты</a></li>
+        </ul>
+      </nav>
+    </header>
+    
+
+    <main>
+      <section class="intro">
+        <h1>Photographer Alex Liss</h1>
+        <p> If you do something, it has to be really perfect.</p>
+        <button>Portfolio</button>
+      </section>
+    </main>
+
+    <footer>
+      <p>Photographer Alex Liss &copy; 2023</p>
+    </footer>
+  </body>
+</html>
+
+<script>
+// Находим все ссылки в навигации
+const navLinks = document.querySelectorAll('nav a');
+
+// Добавляем обработчик событий для каждой ссылки
+navLinks.forEach(link => {
+  link.addEventListener('click', event => {
+    // Отменяем действие по умолчанию для ссылки
+    event.preventDefault();
+
+    // Получаем целевой элемент, на который нужно прокрутить страницу
+    const targetId = link.getAttribute('href').slice(1);
+    const targetElement = document.getElementById(targetId);
+
+    // Плавно прокручиваем страницу до целевого элемента
+    targetElement.scrollIntoView({
+      behavior: 'smooth'
+    });
+  });
+});
+
+// Находим элементы, для которых нужно добавить класс при прокрутке страницы
+const elementsToAnimate = document.querySelectorAll('.animate-on-scroll');
+
+// Добавляем обработчик событий для прокрутки страницы
+window.addEventListener('scroll', () => {
+  // Получаем текущую позицию прокрутки страницы
+  const scrollPosition = window.scrollY;
+
+  // Для каждого элемента проверяем, находится ли он в области видимости
+  elementsToAnimate.forEach(element => {
+    const elementPosition = element.offsetTop;
+    if (scrollPosition > elementPosition - window.innerHeight * 0.8) {
+      // Добавляем класс для анимации или изменения стиля элемента
+      element.classList.add('animate');
+    } else {
+      // Удаляем класс, если элемент уже вышел из области видимости
+      element.classList.remove('animate');
+    }
+  });
+});
+
+
+// Рисуем прыгающий фотоаппарат: код для анимации прыжков камеры
+const camera = document.getElementById('camera');
+let isJumping = false;
+let position = 0;
+const GRAVITY = 0.9;
+const JUMP_FORCE = 12;
+
+function jump() {
+  let timerId = null;
+  if (!isJumping) {
+    isJumping = true;
+    let upInterval = setInterval(() => {
+      if (position < 150) {
+        position += JUMP_FORCE;
+        position *= GRAVITY;
+        camera.style.bottom = position + "px";
+      } else {
+        clearInterval(upInterval);
+        let downInterval = setInterval(() => {
+          if (position > 0) {
+            position -= JUMP_FORCE;
+            position *= GRAVITY;
+            camera.style.bottom = position + "px";
+          } else {
+            clearInterval(downInterval);
+            isJumping = false;
+          }
+        }, 20);
+      }
+    }, 20);
+  }
+}
+
+document.addEventListener("keydown", event => {
+  if (event.code === "Space") {
+    jump();
+  }
+});
+    
+
+</script>
